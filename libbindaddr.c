@@ -20,10 +20,7 @@ int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
 			break;
 		default:
 #ifdef DEBUG
-			//fprintf(stderr, "libbindaddr: Not handling this "
-			//		"address family (%d).\n",
-			fprintf(stderr, LOG_UNHANDLED_AF,
-					addr->sa_family);
+			fprintf(stderr, LOG_UNHANDLED_AF, addr->sa_family);
 #endif
 			return (*original_bind)(sockfd, addr, addrlen);
 	}
@@ -50,14 +47,13 @@ int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
 	unsigned char dst[sizeof(struct in6_addr)];
 	int ret = inet_pton(addr->sa_family, env_bind_address, dst);
 
-	// Call bind with the original arguments on inet_pton failure.
+	// Call bind with the original arguments if inet_pton fails.
 	if (ret != 1) {
 #ifdef DEBUG
 		fprintf(stderr, LOG_ADDR_CONV, env_bind_address);
 #endif
 		return (*original_bind)(sockfd, addr, addrlen);
 	}
-
 
 	// Work out address size for the memcpy.
 	size_t addrsize;
