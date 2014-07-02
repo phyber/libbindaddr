@@ -3,7 +3,10 @@
 int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
 	// Find the original bind.
 	int (*original_bind)(int, const struct sockaddr*, socklen_t);
-	original_bind = dlsym(RTLD_NEXT, "bind");
+
+	// original_bind = dlsym(RTLD_NEXT, "bind"); causes gcc -pedantic to
+	// complain. This cast fixes that.
+	*(void **) (&original_bind) = dlsym(RTLD_NEXT, "bind");
 
 	// Get the appropriate environment variable if we're handling that AF.
 	// Call the bind with original arguments if we aren't handling it.
