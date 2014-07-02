@@ -36,13 +36,6 @@ int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
 	// Cast sockaddr to a sockaddr_in.
 	struct sockaddr_in *bind_sockaddr = (struct sockaddr_in *)addr;
 
-	// Convert original address to string
-	char old_bind_address[INET6_ADDRSTRLEN];
-	inet_ntop(addr->sa_family,
-			&(bind_sockaddr->sin_addr),
-			old_bind_address,
-			sizeof(old_bind_address));
-
 	// Storage size up to the max required for an IPv6 address.
 	unsigned char dst[sizeof(struct in6_addr)];
 	int ret = inet_pton(addr->sa_family, env_bind_address, dst);
@@ -78,6 +71,12 @@ int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
 	memcpy(&(bind_sockaddr->sin_addr), dst, addrsize);
 
 #ifdef DEBUG
+	// Convert original address to string
+	char old_bind_address[INET6_ADDRSTRLEN];
+	inet_ntop(addr->sa_family,
+			&(bind_sockaddr->sin_addr),
+			old_bind_address,
+			sizeof(old_bind_address));
 	fprintf(stderr, LOG_OVERRIDE_SUCCESS, old_bind_address, env_bind_address);
 #endif
 
