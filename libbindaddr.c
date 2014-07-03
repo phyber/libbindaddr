@@ -72,16 +72,19 @@ int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
 		return (*original_bind)(sockfd, addr, addrlen);
 	}
 
-	// Everything until now has been planning, this memcpy is the magic.
-	memcpy(&(bind_sockaddr->sin_addr), dst, addrsize);
-
 #if DEBUG
-	// Convert original address to string
+	// Convert original address to string before overwriting it.
 	char old_bind_address[INET6_ADDRSTRLEN];
 	inet_ntop(addr->sa_family,
 			&(bind_sockaddr->sin_addr),
 			old_bind_address,
 			sizeof(old_bind_address));
+#endif
+
+	// Everything until now has been planning, this memcpy is the magic.
+	memcpy(&(bind_sockaddr->sin_addr), dst, addrsize);
+
+#if DEBUG
 	fprintf(stderr, LOG_OVERRIDE_SUCCESS, old_bind_address, env_bind_address);
 #endif
 
