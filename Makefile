@@ -9,7 +9,6 @@ all: clean $(LIBNAME)
 clean:
 	rm -f $(LIBNAME).so
 
-
 debug: CFLAGS += -DDEBUG
 debug: all
 
