@@ -49,7 +49,7 @@ int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
 	}
 
 	// Work out address size for the memcpy.
-	size_t addrsize;
+	size_t addrsize = 0;
 	switch(addr->sa_family) {
 		case AF_INET:
 			addrsize = sizeof(struct in_addr);
@@ -66,7 +66,12 @@ int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
 #endif
 			return (*original_bind)(sockfd, addr, addrlen);
 	}
-	
+
+	// addrsize has somehow remained 0, call bind with original arguments.
+	if (addrsize == 0) {
+		return (*original_bind)(sockfd, addr, addrlen);
+	}
+
 	// Everything until now has been planning, this memcpy is the magic.
 	memcpy(&(bind_sockaddr->sin_addr), dst, addrsize);
 
