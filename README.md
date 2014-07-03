@@ -4,7 +4,8 @@ Force `bind(2)` to bind to an address of your choosing.
 
 ## Building
 
-`gcc -Wall -fPIC -shared -o libbindaddr.so libbindaddr.c -ldl`
+Simply execute `make` in the source directory. To enable debug output, execute
+`make debug` in the source directory.
 
 ## Usage
 
@@ -16,6 +17,3 @@ normally bind to.
 
 You may also set the `LIBBINDADDR_V6` environment variable which will be used
 if bind is used with an IPv6 address.
-
-Defining `DEBUG` when compiling will result in some (possibly) helpful
-messages being printed to stderr if the library ends up returning early.
