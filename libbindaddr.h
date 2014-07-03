@@ -10,7 +10,7 @@
 #define ENVVAR_V4 "LIBBINDADDR_V4"
 #define ENVVAR_V6 "LIBBINDADDR_V6"
 
-#ifdef DEBUG
+#if DEBUG
 #include <stdio.h>
 #define LOG_PREFIX "libbindaddr: "
 #define LOG_OVERRIDE_SUCCESS LOG_PREFIX "Overriding bind '%s' with '%s'\n"

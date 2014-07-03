@@ -19,7 +19,7 @@ int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
 			env_bind_address = getenv(ENVVAR_V6);
 			break;
 		default:
-#ifdef DEBUG
+#if DEBUG
 			fprintf(stderr, LOG_UNHANDLED_AF, addr->sa_family);
 #endif
 			return (*original_bind)(sockfd, addr, addrlen);
@@ -27,7 +27,7 @@ int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
 
 	// No address to bind to? Just call bind with original arguments.
 	if (env_bind_address == NULL) {
-#ifdef DEBUG
+#if DEBUG
 		fprintf(stderr, LOG_NO_ENVVAR);
 #endif
 		return (*original_bind)(sockfd, addr, addrlen);
@@ -42,7 +42,7 @@ int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
 
 	// Call bind with the original arguments if inet_pton fails.
 	if (ret != 1) {
-#ifdef DEBUG
+#if DEBUG
 		fprintf(stderr, LOG_ADDR_CONV, env_bind_address);
 #endif
 		return (*original_bind)(sockfd, addr, addrlen);
@@ -61,7 +61,7 @@ int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
 		// check for AF_INET || AF_INET6 above, but better safe than
 		// sorry.
 		default:
-#ifdef DEBUG
+#if DEBUG
 			fprintf(stderr, LOG_OH_NO);
 #endif
 			return (*original_bind)(sockfd, addr, addrlen);
@@ -75,7 +75,7 @@ int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
 	// Everything until now has been planning, this memcpy is the magic.
 	memcpy(&(bind_sockaddr->sin_addr), dst, addrsize);
 
-#ifdef DEBUG
+#if DEBUG
 	// Convert original address to string
 	char old_bind_address[INET6_ADDRSTRLEN];
 	inet_ntop(addr->sa_family,
