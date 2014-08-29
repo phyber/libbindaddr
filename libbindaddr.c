@@ -38,9 +38,7 @@ int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
 
 	// No address to bind to? Just call bind with original arguments.
 	if (env_bind_address == NULL) {
-#if DEBUG
-		fprintf(stderr, LOG_NO_ENVVAR);
-#endif
+		errorf(LOG_NO_ENVVAR);
 		return (*original_bind)(sockfd, addr, addrlen);
 	}
 
@@ -53,9 +51,7 @@ int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
 
 	// Call bind with the original arguments if inet_pton fails.
 	if (ret != 1) {
-#if DEBUG
-		fprintf(stderr, LOG_ADDR_CONV, env_bind_address);
-#endif
+		errorf(LOG_ADDR_CONV, env_bind_address);
 		return (*original_bind)(sockfd, addr, addrlen);
 	}
 
@@ -71,11 +67,9 @@ int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
 		// We should never be able to get to this default since we
 		// check for AF_INET || AF_INET6 above, but better safe than
 		// sorry.
-		default:
-#if DEBUG
-			fprintf(stderr, LOG_OH_NO);
-#endif
-			return (*original_bind)(sockfd, addr, addrlen);
+	default:
+		errorf(LOG_OH_NO);
+		return (*original_bind)(sockfd, addr, addrlen);
 	}
 
 	// addrsize has somehow remained 0, call bind with original arguments.
@@ -83,21 +77,17 @@ int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
 		return (*original_bind)(sockfd, addr, addrlen);
 	}
 
-#if DEBUG
 	// Convert original address to string before overwriting it.
 	char old_bind_address[INET6_ADDRSTRLEN];
 	inet_ntop(addr->sa_family,
 			&(bind_sockaddr->sin_addr),
 			old_bind_address,
 			sizeof(old_bind_address));
-#endif
 
 	// Everything until now has been planning, this memcpy is the magic.
 	memcpy(&(bind_sockaddr->sin_addr), dst, addrsize);
 
-#if DEBUG
-	fprintf(stderr, LOG_OVERRIDE_SUCCESS, old_bind_address, env_bind_address);
-#endif
+	errorf(LOG_OVERRIDE_SUCCESS, old_bind_address, env_bind_address);
 
 	// Finally call bind.
 	return (*original_bind)(sockfd, addr, addrlen);
