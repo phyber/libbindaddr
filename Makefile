@@ -1,6 +1,6 @@
 LIBNAME=libbindaddr
 CC?=gcc
-FLAGS=-std=gnu99
+FLAGS=-std=c99
 CFLAGS=-Wall -fPIC -pedantic
 LDFLAGS=-shared -ldl
 
