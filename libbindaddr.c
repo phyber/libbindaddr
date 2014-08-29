@@ -22,18 +22,16 @@ int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
 	// Get the appropriate environment variable if we're handling that AF.
 	// Call the bind with original arguments if we aren't handling it.
 	char *env_bind_address;
-	switch(addr->sa_family) {
-		case AF_INET:
-			env_bind_address = getenv(ENVVAR_V4);
-			break;
-		case AF_INET6:
-			env_bind_address = getenv(ENVVAR_V6);
-			break;
-		default:
-#if DEBUG
-			fprintf(stderr, LOG_UNHANDLED_AF, addr->sa_family);
-#endif
-			return (*original_bind)(sockfd, addr, addrlen);
+	switch (addr->sa_family) {
+	case AF_INET:
+		env_bind_address = getenv(ENVVAR_V4);
+		break;
+	case AF_INET6:
+		env_bind_address = getenv(ENVVAR_V6);
+		break;
+	default:
+		errorf(LOG_UNHANDLED_AF, addr->sa_family);
+		return (*original_bind)(sockfd, addr, addrlen);
 	}
 
 	// No address to bind to? Just call bind with original arguments.
@@ -57,13 +55,13 @@ int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
 
 	// Work out address size for the memcpy.
 	size_t addrsize = 0;
-	switch(addr->sa_family) {
-		case AF_INET:
-			addrsize = sizeof(struct in_addr);
-			break;
-		case AF_INET6:
-			addrsize = sizeof(struct in6_addr);
-			break;
+	switch (addr->sa_family) {
+	case AF_INET:
+		addrsize = sizeof(struct in_addr);
+		break;
+	case AF_INET6:
+		addrsize = sizeof(struct in6_addr);
+		break;
 		// We should never be able to get to this default since we
 		// check for AF_INET || AF_INET6 above, but better safe than
 		// sorry.
