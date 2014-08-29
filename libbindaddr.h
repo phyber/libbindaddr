@@ -7,11 +7,14 @@
 #include <sys/socket.h>
 #include <dlfcn.h>
 
+#if DEBUG
+#include <stdio.h>
+#include <stdarg.h>
+#endif
+
 #define ENVVAR_V4 "LIBBINDADDR_V4"
 #define ENVVAR_V6 "LIBBINDADDR_V6"
 
-#if DEBUG
-#include <stdio.h>
 #define LOG_PREFIX "libbindaddr: "
 #define LOG_OVERRIDE_SUCCESS LOG_PREFIX "Overriding bind '%s' with '%s'\n"
 #define LOG_ADDR_CONV LOG_PREFIX "Failed to convert address '%s into "\
@@ -21,4 +24,3 @@
 #define LOG_OH_NO LOG_PREFIX "Oh no, how did I get here. I am not good with "\
 	"computers.\n"
 #define LOG_UNHANDLED_AF LOG_PREFIX "Not handling this address family (%d).\n"
-#endif
