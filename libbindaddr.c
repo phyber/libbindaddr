@@ -1,5 +1,16 @@
 #include "libbindaddr.h"
 
+static void errorf(const char *fmt, ...) {
+#if DEBUG
+	va_list argp;
+	va_start(argp, fmt);
+
+	vfprintf(stderr, fmt, argp);
+
+	va_end(argp);
+#endif
+}
+
 int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
 	// Find the original bind.
 	int (*original_bind)(int, const struct sockaddr*, socklen_t);
